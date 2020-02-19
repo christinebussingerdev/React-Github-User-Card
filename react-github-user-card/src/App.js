@@ -17,35 +17,45 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      users: []
+      users: [],
+      followers: []
     }
   }
 
   componentDidMount() {
-      usersArray.map(user => {
         return(
           axios
-          .get(`https://api.github.com/users/${user}`)
+          .get(`https://api.github.com/users/christinebussingerdev`)
           .then(res => {
-            this.setState(...this.state.users, res.data);
+            console.log(res.data)
+            this.setState({users: res.data});
           })
           .catch(err => {
             console.log('axios call for other users failed:', err);
+          }),
+
+          axios.get('https://api.github.com/users/christinebussingerdev/followers')
+          .then(res => {
+            this.setState({followers: res.data})
+            console.log(res.data)
           })
         )
-      })
     }
 
   render() {
     return (
       <div className="App">
-        {this.state.users.map((passeduser, index) => {
           return (
-            <UserCard key={index} user={passeduser} />
+            <UserCard user={this.state.users} />
+            {this.state.followers.map(follower => {
+              return (
+                <UserCard user={follower} />
+              )
+            })}
           )
-        })
-        }
-      </div>
+        )
+        </div>
+      
     );
   }
 }
