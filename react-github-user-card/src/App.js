@@ -2,31 +2,49 @@ import React from 'react';
 import './App.css';
 import axios from 'axios';
 
+import UserCard from './components/UserCard';
+
+const usersArray = [
+  'christinebussingerdev',
+  'robsalzberg',
+  'TheeSweeney',
+  'radelmann',
+  'tetondan',
+  'pjhyett'
+]
+
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      myUserCard: "",
-      users: ""
+      users: []
     }
   }
 
   componentDidMount() {
-    axios
-      .get('https://api.github.com/users/christinebussingerdev')
-      .then(res => {
-        this.setState(...this.state.myUserCard, res.data)
-        console.log(res.data)
+      usersArray.map(user => {
+        return(
+          axios
+          .get(`https://api.github.com/users/${user}`)
+          .then(res => {
+            this.setState(...this.state.users, res.data);
+          })
+          .catch(err => {
+            console.log('axios call for other users failed:', err);
+          })
+        )
       })
-      .catch(err => {
-        console.log('axios call for my user card failed:', err)
-      })
-  }
+    }
 
   render() {
     return (
       <div className="App">
-        <h1>hello</h1>
+        {this.state.users.map((passeduser, index) => {
+          return (
+            <UserCard key={index} user={passeduser} />
+          )
+        })
+        }
       </div>
     );
   }
